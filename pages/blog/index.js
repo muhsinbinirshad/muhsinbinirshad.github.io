@@ -9,7 +9,13 @@ import NavigationBar from '../../components/NavigationBar';
 
 export async function getStaticProps() {
   const blogDir = path.join(process.cwd(), 'blog');
-  const files = fs.readdirSync(blogDir).filter(f => f.endsWith('.md'));
+  let files = [];
+  try {
+    files = fs.readdirSync(blogDir).filter(f => f.endsWith('.md'));
+  } catch (err) {
+    // Directory does not exist, return empty posts
+    return { props: { posts: [] } };
+  }
   const posts = files.map(filename => {
     const filePath = path.join(blogDir, filename);
     const fileContent = fs.readFileSync(filePath, 'utf-8');
